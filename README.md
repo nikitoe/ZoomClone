@@ -1,6 +1,6 @@
 # ZoomClone
 
-* USING
+* Using
   * JavaScript
   * Node.js
 
