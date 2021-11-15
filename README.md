@@ -1,3 +1,10 @@
 # ZoomClone
 
-Zoom Clone using Node.js, WebRTC and Websockets
+* USING
+  * JavaScript
+  * Node.js
+
+* Application
+  * Bable
+  * Nodemon
+  * Express
