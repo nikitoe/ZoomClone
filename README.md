@@ -10,6 +10,7 @@
   * Babel
   * Nodemon
   * Express
+  * WebSocket
 
 # 정리
 
