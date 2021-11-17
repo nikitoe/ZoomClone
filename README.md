@@ -7,7 +7,7 @@
   * MVP CSS
 
 * Application
-  * Bable
+  * Babel
   * Nodemon
   * Express
 
