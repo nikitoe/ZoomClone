@@ -29,14 +29,19 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({server});
 
-//연결된 브라우저
+//여러개의 브라우저와 연결시키기위해 fake database를 생성
+const sockets = [];
+
+//연결된 브라우저,socket에 evnet listener을 등록
 wss.on("connection", (socket) =>{
+    sockets.push(socket);
     console.log("Connected to Browser");
     socket.on("close", () => console.log("Disconnected from the Browser"));
+
+    //특정 socket에서 message를 주고 받는다
     socket.on("message", (message) => {
-        console.log(message.toString('utf8'));
+        sockets.forEach(aSocket => aSocket.send(message.toString('utf8')));
     } );
-    socket.send("hello!!!");
 });
 
 server.listen(3000, handleListen);
