@@ -35,13 +35,22 @@ const sockets = [];
 //연결된 브라우저,socket에 evnet listener을 등록
 wss.on("connection", (socket) =>{
     sockets.push(socket);
+    socket["nickname"] = "Anon";
     console.log("Connected to Browser");
     socket.on("close", () => console.log("Disconnected from the Browser"));
 
     //특정 socket에서 message를 주고 받는다
-    socket.on("message", (message) => {
-        sockets.forEach(aSocket => aSocket.send(message.toString('utf8')));
-    } );
+    socket.on("message", (msg) => {
+        const message = JSON.parse(msg);
+
+        switch (message.type) {
+            case "new_message":
+                sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.payload}`));
+            case "nickname":
+                socket["nickname"] = message.payload;
+        };
+    });
 });
 
 server.listen(3000, handleListen);
+
