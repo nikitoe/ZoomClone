@@ -1,8 +1,16 @@
 const messageList = document.querySelector("ul");
-const messageForm  = document.querySelector("form");
+const messageForm  = document.querySelector("#message");
+const nickForm  = document.querySelector("#nick");
 
 //서버와 연결
 const socket = new WebSocket(`ws://${window.location.host}`);
+
+//JSON을 이용하여 Object형식을 String으로 변환한다.
+function makeMessage (type, payload) {
+    const msg = {type, payload};
+    return JSON.stringify(msg);
+};
+
 
 //서버와 연결이 됬을때
 socket.addEventListener("open", () => {
@@ -11,7 +19,9 @@ socket.addEventListener("open", () => {
 
 //서버와 연결중일때
 socket.addEventListener("message", (message) => {
-    console.log("New message: ", message.data);
+    const li = document.createElement("li");
+    li.innerText = message.data;
+    messageList.append(li);
 });
 
 //서버와 연결이 끊겼을때
@@ -28,8 +38,15 @@ socket.addEventListener("close", () => {
 function handleSubmit (event) {
     event.preventDefault();
     const input = messageForm.querySelector("input");
-    socket.send(input.value);
+    socket.send(makeMessage("new_message", input.value));
     input.value = "";
 };
 
+function handleNickSubmit (event) {
+    event.preventDefault();
+    const input = nickForm.querySelector("input");
+    socket.send(makeMessage("nickname", input.value));
+};
+
 messageForm.addEventListener("submit", handleSubmit);
+nickForm.addEventListener("submit", handleNickSubmit);
