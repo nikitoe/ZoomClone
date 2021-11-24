@@ -72,9 +72,19 @@ function addMessage (message) {
     ul.appendChild(li);
 };
 
+function handleMessageSubmit (event) {
+    event.preventDefault();
+    const input = room.querySelector("input");
+    const value = input.value;
+    socket.emit("new_message", input.value, roomName, () => {
+        addMessage(`You: ${value}`);
+    });
+    input.value = "";
+};
+
 function handleRoomSubmit (event) {
     event.preventDefault();
-    const input = form.querySelector("input");
+    const input = room.querySelector("input");
 
     //어떤 event든 보낼수 있다, javascript object를 보낼수있다
     socket.emit("enter_room", input.value, () => {
@@ -82,6 +92,8 @@ function handleRoomSubmit (event) {
         room.hidden = false;
         const h3 = room.querySelector("h3");
         h3.innerText = `Room ${roomName}`;
+        const form = room.querySelector("form");
+        form.addEventListener("submit", handleMessageSubmit);
     });
     roomName = input.value;
     input.value = "";
@@ -92,3 +104,9 @@ form.addEventListener("submit", handleRoomSubmit);
 socket.on("welcome", () => {
     addMessage("Someone joined!");
 });
+
+socket.on("bye", () => {
+    addMessage("Someone left ㅠㅠ");
+});
+
+socket.on("new_message", addMessage);
