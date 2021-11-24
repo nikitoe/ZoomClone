@@ -1,6 +1,8 @@
 import express from "express";
-import WebSocket from "ws";
+//import WebSocket from "ws";
+import SocketIO from "socket.io";
 import http from "http";
+import { SocketAddress } from "net";
 
 const app = express();
 
@@ -27,30 +29,41 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 //나의 http 서버를 만듬
 const server = http.createServer(app);
 
-const wss = new WebSocket.Server({server});
+//const wss = new WebSocket.Server({server});
 
-//여러개의 브라우저와 연결시키기위해 fake database를 생성
-const sockets = [];
+const swServer = SocketIO(server);
 
-//연결된 브라우저,socket에 evnet listener을 등록
-wss.on("connection", (socket) =>{
-    sockets.push(socket);
-    socket["nickname"] = "Anon";
-    console.log("Connected to Browser");
-    socket.on("close", () => console.log("Disconnected from the Browser"));
-
-    //특정 socket에서 message를 주고 받는다
-    socket.on("message", (msg) => {
-        const message = JSON.parse(msg);
-
-        switch (message.type) {
-            case "new_message":
-                sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.payload}`));
-            case "nickname":
-                socket["nickname"] = message.payload;
-        };
+swServer.on("connection", (socket) => {
+    socket.on("enter_room", (msg, done) => {
+        console.log(msg);
+        setTimeout(() => {
+            done();
+        },10000);
     });
 });
+
+//여러개의 브라우저와 연결시키기위해 fake database를 생성
+// const sockets = [];
+
+// //연결된 브라우저,socket에 evnet listener을 등록
+// wss.on("connection", (socket) =>{
+//     sockets.push(socket);
+//     socket["nickname"] = "Anon";
+//     console.log("Connected to Browser");
+//     socket.on("close", () => console.log("Disconnected from the Browser"));
+
+//     //특정 socket에서 message를 주고 받는다
+//     socket.on("message", (msg) => {
+//         const message = JSON.parse(msg);
+
+//         switch (message.type) {
+//             case "new_message":
+//                 sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.paly}`));
+//             case "nickname":
+//                 socket["nickname"] = message.payload;
+//         };
+//     });
+// });
 
 server.listen(3000, handleListen);
 
