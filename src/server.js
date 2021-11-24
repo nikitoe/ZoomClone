@@ -54,17 +54,20 @@ swServer.on("connection", (socket) => {
         console.log(`Socket Event:${event}`);
     });
     socket.on("enter_room", (roomName, done) => {
-        console.log(socket.rooms);
         socket.join(roomName);
-        console.log(socket.rooms);
         done();
         //나를 제외한 방안에 있는 모두에에게 알림
         socket.to(roomName).emit("welcome", socket.nickname);
+        swServer.sockets.emit("room_change", publicRooms());
     });
 
     socket.on("disconnecting", () => {
         socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
     });
+
+    socket.on("disconnect", () => {
+        swServer.sockets.emit("room_change", publicRooms());
+    })
 
     socket.on("new_message", (msg, room, done) => {
         socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);

@@ -119,3 +119,22 @@ socket.on("bye", (left) => {
 });
 
 socket.on("new_message", addMessage);
+
+//socket.on("room_change", (msg) => console.log(msg)); 위와 같다
+socket.on("room_change", (rooms) => {
+    const roomList = welcome.querySelector("ul");
+
+    //항상 방 목록을 비워준다
+    roomList.innerHTML = "";
+    
+    //내 어플리케이션에 room이 하나도 없을 때, 모든 것을 비워준다.
+    if(rooms.length=== 0){
+
+    };
+
+    rooms.forEach(room => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        roomList.append(li);
+    })
+});
