@@ -65,12 +65,19 @@ room.hidden = true;
 
 let roomName;
 
+function addMessage (message) {
+    const ul = room.querySelector("ul");
+    const li = document.createElement("li");
+    li.innerText = message;
+    ul.appendChild(li);
+};
+
 function handleRoomSubmit (event) {
     event.preventDefault();
     const input = form.querySelector("input");
 
     //어떤 event든 보낼수 있다, javascript object를 보낼수있다
-    socket.emit("enter_room", {payload: input.value}, () => {
+    socket.emit("enter_room", input.value, () => {
         welcome.hidden = true;
         room.hidden = false;
         const h3 = room.querySelector("h3");
@@ -81,3 +88,7 @@ function handleRoomSubmit (event) {
 }
 
 form.addEventListener("submit", handleRoomSubmit);
+
+socket.on("welcome", () => {
+    addMessage("Someone joined!");
+});
