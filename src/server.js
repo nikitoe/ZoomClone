@@ -33,13 +33,30 @@ const server = http.createServer(app);
 
 const swServer = SocketIO(server);
 
+function publicRooms () {
+    const {
+        sockets: {
+            adapter:{sids, rooms},
+        },
+    } = swServer;
+    const publicRooms = [];
+    rooms.forEach((_, key) => {
+        if(sids.get(key) === undefined) {
+            publicRooms.push(key);
+        };
+    });
+    return publicRooms;
+}
+
 swServer.on("connection", (socket) => {
     socket["nickname"] = "Anon";
     socket.onAny((event) => {
         console.log(`Socket Event:${event}`);
     });
     socket.on("enter_room", (roomName, done) => {
+        console.log(socket.rooms);
         socket.join(roomName);
+        console.log(socket.rooms);
         done();
         //나를 제외한 방안에 있는 모두에에게 알림
         socket.to(roomName).emit("welcome", socket.nickname);

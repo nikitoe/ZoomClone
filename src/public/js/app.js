@@ -88,21 +88,22 @@ function handleNicknameSubmit (event) {
     socket.emit("nickname", input.value)
 }
 
+function showRoom () {
+    welcome.hidden = true;
+    room.hidden = false;
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName}`;
+    const msgForm = room.querySelector("#msg");
+    const nameForm = room.querySelector("#name");
+    msgForm.addEventListener("submit", handleMessageSubmit);
+    nameForm.addEventListener("submit", handleNicknameSubmit);
+};
+
 function handleRoomSubmit (event) {
     event.preventDefault();
-    const input = room.querySelector("input");
-
+    const input = form.querySelector("input");
     //어떤 event든 보낼수 있다, javascript object를 보낼수있다
-    socket.emit("enter_room", input.value, () => {
-        welcome.hidden = true;
-        room.hidden = false;
-        const h3 = room.querySelector("h3");
-        h3.innerText = `Room ${roomName}`;
-        const msgForm = room.querySelector("#msg");
-        const nameForm = room.querySelector("#name");
-        msgForm.addEventListener("submit", handleMessageSubmit);
-        nameForm.addEventListener("submit", handleNicknameSubmit);
-    });
+    socket.emit("enter_room", input.value, showRoom);
     roomName = input.value;
     input.value = "";
 }
