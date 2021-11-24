@@ -59,6 +59,11 @@ const socket = io();
 
 const welcome = document.getElementById("welcome");
 const form = welcome.querySelector("form");
+const room = document.getElementById("room");
+
+room.hidden = true;
+
+let roomName;
 
 function handleRoomSubmit (event) {
     event.preventDefault();
@@ -66,8 +71,12 @@ function handleRoomSubmit (event) {
 
     //어떤 event든 보낼수 있다, javascript object를 보낼수있다
     socket.emit("enter_room", {payload: input.value}, () => {
-        console.log("server is done");
+        welcome.hidden = true;
+        room.hidden = false;
+        const h3 = room.querySelector("h3");
+        h3.innerText = `Room ${roomName}`;
     });
+    roomName = input.value;
     input.value = "";
 }
 
