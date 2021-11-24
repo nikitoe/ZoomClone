@@ -34,6 +34,7 @@ const server = http.createServer(app);
 const swServer = SocketIO(server);
 
 swServer.on("connection", (socket) => {
+    socket["nickname"] = "Anon";
     socket.onAny((event) => {
         console.log(`Socket Event:${event}`);
     });
@@ -41,17 +42,19 @@ swServer.on("connection", (socket) => {
         socket.join(roomName);
         done();
         //나를 제외한 방안에 있는 모두에에게 알림
-        socket.to(roomName).emit("welcome");
+        socket.to(roomName).emit("welcome", socket.nickname);
     });
 
     socket.on("disconnecting", () => {
-        socket.rooms.forEach(room => socket.to(room).emit("bye"));
+        socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
     });
 
     socket.on("new_message", (msg, room, done) => {
-        socket.to(room).emit("new_message", msg);
+        socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
         done();
     });
+
+    socket.on("nickname", nickname => socket["nickname"] = nickname);
 });
 
 //여러개의 브라우저와 연결시키기위해 fake database를 생성
