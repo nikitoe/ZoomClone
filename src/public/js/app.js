@@ -110,11 +110,15 @@ function handleRoomSubmit (event) {
 
 form.addEventListener("submit", handleRoomSubmit);
 
-socket.on("welcome", (user) => {
+socket.on("welcome", (user, newCount) => {
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${user} joined!`);
 });
 
-socket.on("bye", (left) => {
+socket.on("bye", (left, newCount) => {
+    const h3 = room.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${newCount})`;
     addMessage(`${left} left ㅠㅠ`);
 });
 
@@ -126,7 +130,7 @@ socket.on("room_change", (rooms) => {
 
     //항상 방 목록을 비워준다
     roomList.innerHTML = "";
-    
+
     //내 어플리케이션에 room이 하나도 없을 때, 모든 것을 비워준다.
     if(rooms.length=== 0){
 

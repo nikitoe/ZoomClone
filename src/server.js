@@ -48,6 +48,10 @@ function publicRooms () {
     return publicRooms;
 }
 
+function countRoom (roomName) { 
+    return swServer.sockets.adapter.rooms.get(roomName)?.size
+};
+
 swServer.on("connection", (socket) => {
     socket["nickname"] = "Anon";
     socket.onAny((event) => {
@@ -57,12 +61,14 @@ swServer.on("connection", (socket) => {
         socket.join(roomName);
         done();
         //나를 제외한 방안에 있는 모두에에게 알림
-        socket.to(roomName).emit("welcome", socket.nickname);
+        socket.to(roomName).emit("welcome", socket.nickname, countRoom(roomName));
         swServer.sockets.emit("room_change", publicRooms());
     });
 
     socket.on("disconnecting", () => {
-        socket.rooms.forEach(room => socket.to(room).emit("bye", socket.nickname));
+        socket.rooms.forEach( (room) => 
+        socket.to(room).emit("bye", socket.nickname, countRoom(room) - 1)
+        );
     });
 
     socket.on("disconnect", () => {
