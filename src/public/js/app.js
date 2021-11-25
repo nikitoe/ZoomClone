@@ -136,6 +136,7 @@ socket.on("room_change", (rooms) => {
 
     };
 
+    //생성된 방의 목록을 보여준다.
     rooms.forEach(room => {
         const li = document.createElement("li");
         li.innerText = room;
