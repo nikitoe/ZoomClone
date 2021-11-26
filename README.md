@@ -28,3 +28,4 @@
 * Public files : FrontEnd에서 구동되는 코드(중요함)
   * server.js : BackEnd에서 구동
   * app.js : FrontEnd에서 구동
+* WebRTC : Peer to peer 방식

@@ -25,6 +25,14 @@ appVideo.get("/*", (req, res) => res.redirect("/"));
 const server = http.createServer(appVideo);
 const swServer = SocketIO(server);
 
+swServer.on("connection", (socket) => {
+    socket.on("join_room", (roomName, done) => {
+        socket.join(roomName);
+        done();
+        socket.to(roomName).emit("welcome");
+    });
+});
+
 //appVideo.listen(3000, handleListen);  
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 server.listen(3000, handleListen);
